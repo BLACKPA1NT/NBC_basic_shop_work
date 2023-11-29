@@ -51,8 +51,20 @@ export default function Main() {
 					케러셀
 				</section>
 				{/* 여름 추천템 */}
-				<section>
-					<h2>🔥 여름 추천템 🔥</h2>
+				<section
+					style={{
+						marginTop: "56px",
+						textAlign: "center",
+					}}
+				>
+					<h2
+						onClick={() => {
+							alert("이동하시겠습니까?");
+							navigate("/products");
+						}}
+					>
+						🔥 여름 추천템 🔥
+					</h2>
 					<div
 						style={{ display: "flex", justifyContent: "center", gap: "24px" }}
 					>
