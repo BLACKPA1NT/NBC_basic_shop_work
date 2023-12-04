@@ -1,23 +1,14 @@
 import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	addToCart,
-	updateCart,
-	removeCart,
-	count감소,
-	count증가,
-} from "../index";
+import { addToCart, removeCart, count감소, count증가 } from "../index";
 import { nanoid } from "@reduxjs/toolkit";
 
 export default function Product() {
 	const products = useSelector((state) => state.상품들);
 	const cart = useSelector((state) => state.장바구니);
-	// const remove = useSelector((state) => state.제거);
 	const [size, setSize] = useState("");
 	const [quantity, setQuantity] = useState(1);
-	// const [addQuantity, setAddQuantity] = useState("");
-	// const [display, setDisplay] = useState(`display = "block"`);
 
 	const { id } = useParams();
 	const product = products.find((product) => product.id === id);

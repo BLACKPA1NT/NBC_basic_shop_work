@@ -49,10 +49,8 @@ const cartProducts = createSlice({
 			state.push(action.payload);
 		},
 		removeCart: (state, action) => {
-			// action.payload에는 제거하려는 상품의 정보가 포함될 것으로 가정합니다.
 			const productIdToRemove = action.payload.id;
 			console.log("Removing from cart", productIdToRemove);
-			// 제거하려는 상품을 찾아서 배열에서 제거합니다.
 			return state.filter((상품) => 상품.id !== productIdToRemove);
 		},
 
