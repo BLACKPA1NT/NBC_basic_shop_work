@@ -2,8 +2,12 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { sortByPrice } from "../index";
 
 export default function Products() {
+	const dispatch = useDispatch();
+	const products = useSelector((state) => state.상품들);
 	const [searchParams, setSearchParams] = useSearchParams();
 	console.log({ searchParams: searchParams.get("sort") });
 	const navigate = useNavigate();
@@ -23,52 +27,27 @@ export default function Products() {
 				>
 					🔥 여름 추천템 🔥
 				</h2>
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "center",
-						gap: "24px",
-					}}
-				>
-					<Link to="/products/1">
-						<div
-							style={{
-								width: "200px",
-								height: "240px",
-								backgroundColor: "#068FFF",
-							}}
-						>
-							상품1
-						</div>
-					</Link>
-					<Link to="/products/2">
-						<div
-							style={{
-								width: "200px",
-								height: "240px",
-								backgroundColor: "#068FFF",
-							}}
-						>
-							상품2
-						</div>
-					</Link>
-					<Link to="/products/3">
-						<div
-							style={{
-								width: "200px",
-								height: "240px",
-								backgroundColor: "#068FFF",
-							}}
-						>
-							상품3
-						</div>
-					</Link>
+				<div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
+					{products.map((product) => {
+						return (
+							<Link to={`/products/${product.id}`}>
+								<div
+									style={{
+										width: "200px",
+										height: "240px",
+										backgroundColor: "#068FFF",
+									}}
+								>
+									<div>{product.name}</div>
+									<div>{product.price}</div>
+								</div>
+							</Link>
+						);
+					})}
 				</div>
 				<button
 					onClick={() => {
-						setSearchParams({
-							sort: "price",
-						});
+						dispatch(sortByPrice());
 					}}
 				>
 					가격순정렬

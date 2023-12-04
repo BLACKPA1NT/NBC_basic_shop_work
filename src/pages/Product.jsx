@@ -1,51 +1,49 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useParams } from "react-router-dom";
-
-import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+	addToCart,
+	updateCart,
+	removeCart,
+	count감소,
+	count증가,
+} from "../index";
+import { nanoid } from "@reduxjs/toolkit";
 
 export default function Product() {
-	const [selectedOption, setSelectedOption] = useState("");
-
-	const navigate = useNavigate();
-
-	const [items, setItems] = useState([
-		{
-			id: 1,
-			name: "멋진 바지",
-			price: "20000",
-			like: "100",
-			option1: "28",
-			option2: "30",
-			option3: "32",
-		},
-		{
-			id: 2,
-			name: "멋진 셔츠",
-			price: "10000",
-			like: "200",
-			option1: "small",
-			option2: "medium",
-			option3: "large",
-		},
-		{
-			id: 3,
-			name: "멋진 신발",
-			price: "30000",
-			like: "300",
-			option1: "230",
-			option2: "240",
-			option3: "250",
-			option4: "260",
-			option5: "270",
-		},
-	]);
+	const products = useSelector((state) => state.상품들);
+	const cart = useSelector((state) => state.장바구니);
+	// const remove = useSelector((state) => state.제거);
+	const [size, setSize] = useState("");
+	const [quantity, setQuantity] = useState(1);
+	// const [addQuantity, setAddQuantity] = useState("");
+	// const [display, setDisplay] = useState(`display = "block"`);
 
 	const { id } = useParams();
-	const itemId = parseInt(id); // 또는 const itemId = +id;
-	const itemDetail = items.find((item) => item.id === itemId);
-	const handleOptionChange = (event) => {
-		setSelectedOption(event.target.value);
+	const product = products.find((product) => product.id === id);
+
+	const dispatch = useDispatch();
+
+	const plusQuantity = () => {
+		setQuantity(quantity + 1);
 	};
+
+	const minusQuantity = () => {
+		setQuantity(Math.max(1, quantity - 1));
+	};
+
+	// const addPluse = () => {
+	// 	dispatch(
+	// 		updateCart({
+	// 			id: product.id,
+	// 			quantity: quantity + 1,
+	// 		})
+	// 	);
+	// };
+
+	// const addMinus = () => {};
+
+	const optionId = nanoid();
 
 	return (
 		<>
@@ -64,68 +62,116 @@ export default function Product() {
 							width: "200px",
 							height: "240px",
 							backgroundColor: "#068FFF",
-							color: "#fff",
-							display: "flex",
-							justifyContent: "center",
-							fontWeight: "700",
+							color: "white",
 						}}
 					>
-						상품{id}
+						<div>{product.name}</div>
 					</div>
 					<div>
-						<h3>가격: {itemDetail.price}</h3>
-						<h3>좋아요: {itemDetail.like}</h3>
+						<h3>가격: {product.price} 원</h3>
+						<h3>좋아요: {product.likes} 개</h3>
 						<h3>구매옵션</h3>
 						<select
 							style={{
 								width: "100px",
 							}}
-							value={selectedOption}
-							onChange={handleOptionChange}
+							onChange={(e) => {
+								setSize(e.target.value);
+							}}
 						>
-							{itemDetail.id === 1 || itemDetail.id === 2
-								? [
-										itemDetail.option1,
-										itemDetail.option2,
-										itemDetail.option3,
-								  ].map((option, index) => (
-										<option key={index} value={option}>
-											{option}
-										</option>
-								  ))
-								: [
-										itemDetail.option1,
-										itemDetail.option2,
-										itemDetail.option3,
-										itemDetail.option4,
-										itemDetail.option5,
-								  ].map((option, index) => (
-										<option key={index} value={option}>
-											{option}
-										</option>
-								  ))}
+							<option value="">선택하세요</option>
+							{product.options.map((option) => {
+								return (
+									<option key={option} value={option}>
+										{option}
+									</option>
+								);
+							})}
 						</select>
-						<p>구매옵션: {selectedOption}</p>
+						<div>구매옵션: {size}</div>
+						<div style={{ display: size === "" ? "none" : "block" }}>
+							<h3>개수: {quantity}</h3>
+							<button onClick={plusQuantity}>+</button>
+							<button onClick={minusQuantity}>-</button>
+						</div>
+						<h3 style={{ display: size === "" ? "none" : "block" }}>
+							총 금액: {product.price * quantity} 원
+						</h3>
+
+						<button
+							onClick={() => {
+								if (size === "") {
+									alert("옵션을 선택해주세요");
+								} else {
+									alert("장바구니가 추가 되었습니다");
+									dispatch(
+										addToCart({
+											...product,
+											optionId,
+											size,
+											quantity,
+											id: nanoid(),
+										})
+									);
+								}
+							}}
+						>
+							장바구니 추가하기
+						</button>
 					</div>
 				</div>
+				<h1>장바구니</h1>
+				<div>
+					{cart.map((상품) => {
+						return (
+							<div
+								key={상품.id}
+								style={{
+									border: "1px solid black",
+								}}
+							>
+								<div>
+									<h3
+										style={{
+											fontSize: "36px",
+											color: "#068FFF",
+										}}
+									>
+										{상품.name}
+									</h3>
+									<h3>가격: {상품.price} 원</h3>
+									<h3>좋아요: {상품.likes} 개</h3>
+									<h3>구매옵션: {상품.size}</h3>
+									<h3>개수: {상품.quantity} 개</h3>
+									<button
+										onClick={() => {
+											dispatch(count증가({ id: 상품.id }));
+										}}
+									>
+										+
+									</button>
+									<button
+										onClick={() => {
+											dispatch(count감소({ id: 상품.id }));
+										}}
+									>
+										-
+									</button>
+									<h3>총 금액: {상품.price * 상품.quantity} 원</h3>
+									<button
+										onClick={() => {
+											console.log("Removing from cart", 상품.id);
+											dispatch(removeCart({ id: 상품.id }));
+										}}
+									>
+										장바구니 삭제
+									</button>
+								</div>
+							</div>
+						);
+					})}
+				</div>
 			</div>
-			<footer
-				style={{
-					marginTop: "24px",
-					display: "flex",
-					justifyContent: "space-between",
-					padding: "24px",
-					backgroundColor: "#EEEEEE",
-					color: "black",
-					position: "fixed",
-					bottom: "0",
-					width: "100%",
-					boxSizing: "border-box",
-				}}
-			>
-				<div>문의하기</div>
-				<div>SNS 채널들</div>
-			</footer>
 		</>
 	);
 }

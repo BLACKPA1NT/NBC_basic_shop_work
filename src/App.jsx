@@ -7,8 +7,13 @@ import Layout from "./common/Layout";
 import { Link } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import { useState } from "react";
+import { nanoid } from "nanoid";
+import { useSelector } from "react-redux";
 
 function App() {
+	const products = useSelector((state) => state.상품들);
+
 	return (
 		<BrowserRouter>
 			<Routes>

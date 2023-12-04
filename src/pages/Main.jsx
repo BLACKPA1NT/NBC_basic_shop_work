@@ -1,39 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { UseSelector, useSelector } from "react-redux/es/hooks/useSelector";
 
 export default function Main() {
 	const navigate = useNavigate();
-
-	const [items, setItems] = useState([
-		{
-			id: 1,
-			name: "멋진 바지",
-			price: "20000",
-			like: "100",
-		},
-		{
-			id: 2,
-			name: "멋진 셔츠",
-			price: "10000",
-			like: "200",
-		},
-		{
-			id: 3,
-			name: "멋진 신발",
-			price: "30000",
-			like: "300",
-		},
-	]);
-
-	const addNewItem = () => {
-		const newItem = {
-			id: items.length + 1,
-			name: "새 상품",
-			price: "0",
-			like: "0",
-		};
-		setItems([...items, newItem]);
-	};
+	const products = useSelector((state) => state.상품들);
 	return (
 		<>
 			<main>
@@ -65,34 +36,26 @@ export default function Main() {
 					>
 						🔥 여름 추천템 🔥
 					</h2>
+					<Link to="/products">더보기</Link>
 					<div
 						style={{ display: "flex", justifyContent: "center", gap: "24px" }}
 					>
-						{items.map((item) => (
-							<Link
-								key={item.id}
-								to={{
-									pathname: `/products/${item.id}`,
-									state: { product: item },
-								}}
-							>
-								<div
-									style={{
-										width: "200px",
-										height: "240px",
-										backgroundColor: "#068FFF",
-										color: "#fff",
-										display: "flex",
-										justifyContent: "center",
-										fontWeight: "700",
-									}}
-								>
-									{item.name} <br />
-									{item.price}원
-								</div>
-							</Link>
-						))}
-						<Link to="/products">더보기</Link>
+						{products.map((product) => {
+							return (
+								<Link to={`/products/${product.id}`}>
+									<div
+										style={{
+											width: "200px",
+											height: "240px",
+											backgroundColor: "#068FFF",
+										}}
+									>
+										<div>{product.name}</div>
+										<div>{product.price}</div>
+									</div>
+								</Link>
+							);
+						})}
 					</div>
 				</section>
 
